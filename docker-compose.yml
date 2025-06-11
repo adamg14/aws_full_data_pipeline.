@@ -1,0 +1,72 @@
+x-airflow:
+  &airflow
+  build:
+    context: .
+    dockerfile: Dockerfile
+  image: custom-airflow:2.7.1-python3.9
+  env_file:
+    - airflow.env
+  volumes:
+    - ./config:/opt/airflow/config
+    - ./dags:/opt/airflow/dags
+    - ./data:/opt/airflow/data
+    - ./etls:/opt/airflow/etls
+    - ./logs:/opt/airflow/logs
+    - ./pipelines:/opt/airflow/pipelines
+    - ./plugins:/opt/airflow/plugins
+    - ./tests:/opt/airflow/tests
+    - ./utils:/opt/airflow/utils
+    - ./requirements.txt:/opt/airflow/requirements.txt
+  
+  depends_on:
+    - postgres
+    - redis
+
+services:
+  postgres:
+    image: postgres:12
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=airflow_data
+      - POSTGRES_PORT=5432
+    ports:
+    - "5432:5432"
+  
+  redis:
+    image: redis:latest
+    ports:
+      - "6379:6379"
+  
+  # airflow initialise, webserver etc inherits from the airflow docker file
+  airflow-init:
+    # inherit everything defined in the airflow block
+    <<: *airflow
+    command: >
+      bash -c "
+      pip install -r /opt/airflow/requirements.txt &&
+      airflow db init &&
+      airflow db upgrade &&
+      airflow users create \
+      --username admin \
+      --firstname admin \
+      --lastname admin \
+      --role Admin \
+      --email admin@admin.com \
+      --password admin
+      "
+    restart: "no"
+  
+  airflow-webserver:
+    <<: *airflow
+    command: webserver
+    ports:
+      - "8080:8080"
+  
+  airflow-scheduler:
+    <<: *airflow
+    command: scheduler
+
+  airflow-worker:
+    <<: *airflow
+    command: celery worker
