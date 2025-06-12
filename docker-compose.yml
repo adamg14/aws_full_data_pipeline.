@@ -1,8 +1,9 @@
-x-airflow:
-  &airflow
+airflow_etl:
+  &airflow_etl
   build:
     context: .
     dockerfile: Dockerfile
+    name: airflow_etl
   image: custom-airflow:2.7.1-python3.9
   env_file:
     - airflow.env
