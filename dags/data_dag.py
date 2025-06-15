@@ -9,6 +9,8 @@ print("hello world")
 # get the absolute directory path of this file, and get the directory which it is stored in
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
+from pipelines.data_pipeline import pipeline
+
 default_args = {
     "owner": "Adam Worede",
     "start_date": datetime(2025, 6, 12),
