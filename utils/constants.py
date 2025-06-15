@@ -14,3 +14,13 @@ DATABASE_NAME = parser.get("database_credentials", "database_name")
 DATABASE_PORT = parser.get("database_credentials", "database_port")
 DATABASE_USERNAME = parser.get("database_credentials", "database_username")
 DATABASE_PASSWORD = parser.get("database_credentials", "database_password")
+
+REDDIT_POST_FIELDS = (
+    'id',
+    'url',
+    'title',
+    'score',
+    'num_comments',
+    'author',
+    'created_utc'
+)

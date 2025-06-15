@@ -1,6 +1,7 @@
 from praw import Reddit
 import sys
 
+
 def connect_api(client_id, client_secret, user_agent):
     try:
         reddit = Reddit(
@@ -22,11 +23,13 @@ def extract_posts(reddit_instance, subreddit_name, time_filter, limit):
         
         for post in subreddit.top(time_filter=time_filter, limit=limit):
             posts.append({
-                "title": post.title,
-                "score": post.score,
-                "url": post.url,
-                "id": post.id,
-                "num_comments": post.num_comments
+                'id': post.id,
+                'url': post.url,
+                'title': post.title,
+                'score': post.score,
+                'num_comments': post.num_comments,
+                'author': post.author,
+                'created_utc': post.created_utc
             })
         
         print(posts)
